@@ -12,9 +12,9 @@ Here's a game that puts `model_balanced.h5` against `model_aggressive.h5`.
 
 
 #### Dependencies
-- Tensorflow
-- Keras
-- Numpy
-- pygame
-- pandas
-- matplotlib
+- `tensorflow==1.15`
+- `keras==2.3.0`
+- `numpy==1.19.4`
+- `pygame1.9.6`
+- `pandas==0.24.2`
+- `matplotlib==3.1.3`
