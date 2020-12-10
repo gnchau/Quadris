@@ -29,13 +29,13 @@ class Shape:
         return self.shape_coords[rotation % self.rotations]
 
     def get_relative_coords(self, rotation):
-        blueprint = self.get_string_rep(rotation)
-        width = len(blueprint[0])
-        height = len(blueprint)
-        for offset_y in range(height):
-            for offset_x in range(width):
-                if blueprint[offset_y][offset_x] != ' ':
-                    yield offset_y, offset_x
+        str = self.get_string_rep(rotation)
+        width = len(str[0])
+        height = len(str)
+        for dy in range(height):
+            for dx in range(width):
+                if str[dy][dx] != ' ':
+                    yield dy, dx
 
 
 SHAPE_I = Shape(1, [[
