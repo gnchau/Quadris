@@ -11,7 +11,7 @@ Here's a game that puts `model_balanced.h5` against `model_aggressive.h5`.
 ![Versus Mode Demo](./vs_sample.gif)
 
 
-#### Dependencies
+## Dependencies
 - `tensorflow==1.15`
 - `keras==2.3.0`
 - `numpy==1.19.4`
