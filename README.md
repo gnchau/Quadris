@@ -1,7 +1,7 @@
 # Quadris - A Deep Q Network That Plays Tetris
 
 ## Visual View Demo
-Here is part of a sample game that my `model_balanced.h5` played.
+Here's part of a sample game that my `model_balanced.h5` played.
 
 ![model_balanced playing for a minute](./sp_sample.gif)
 
