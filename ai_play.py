@@ -101,4 +101,4 @@ def add_level_to_state(states, max_player, level):
             state[1][3] += abs(level)
 
 if __name__ == '__main__':
-    play(single_player=False)
+    play(single_player=True)
