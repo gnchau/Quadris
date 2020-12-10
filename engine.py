@@ -98,10 +98,6 @@ class Tetris:
         self.board.insert(0, [0 for _ in range(self.columns)])
         return removed_row
 
-    def insert_row(self, y, row):
-        self.board.pop(0)
-        self.board.insert(y, row)
-
     def combined_moves(self, x, rotation):
         if self.current is None:
             return False
@@ -119,6 +115,10 @@ class Tetris:
 
         return self.solidify()
 
+    def insert_row(self, y, row):
+        self.board.pop(0)
+        self.board.insert(y, row)
+
     def generate_possible_states(self):
         """
         Returns the possible tuples of ((x translation, rotation), [property1, property2, ...])
@@ -131,23 +131,21 @@ class Tetris:
         last_piece = self.previous
 
         for rotation in range(self.current.shape.rotations):
-            for column in range(self.columns + 1):
+            for translation in range(self.columns + 1):
                 piece = Tetromino(self.current.x, self.current.y, self.current.shape, self.current.rotation)
-                if self.combined_moves(column, rotation):
+                if self.combined_moves(translation, rotation):
                     rows_cleared = self.get_possible_cleared_rows()
-                    removed_rows = []
+                    removed = []
                     for y in rows_cleared:
-                        removed_rows.append((y, self.remove_row(y)))
+                        removed.append((y, self.remove_row(y)))
 
                     # Represent a state as tuple(tuple(x translation, rotation), List[properties])
-                    states.append(((column, rotation), self.get_properties(rows_cleared)))
+                    states.append(((translation, rotation), self.get_properties(rows_cleared)))
 
-                    for y, row in reversed(removed_rows):
-                        self.insert_row(y, row)
-
+                    for ind, row in reversed(removed):
+                        self.insert_row(ind, row)
                     for x, y in self.previous.get_coods():
                         self.board[y][x] = 0
-
                 self.current = piece
                 self.previous = last_piece
         return states
@@ -172,8 +170,11 @@ class Tetris:
     def compute_score_bonus(self, number_rows_cleared):
         return self.SCORE_MAP.get(number_rows_cleared, 0)
 
-    def get_properties(self, rows):
-        return [len(rows), self.get_holes(), self.get_bumpiness(), self.get_total_peaks()]
+    def get_bumpiness(self):
+        return sum([abs(col2 - col1) for col1, col2 in zip(self.get_peaks()[:-1], self.get_peaks()[1:])])
+
+    def get_total_peaks(self):
+        return sum(self.get_peaks())
 
     def get_peaks(self):
         peaks = []
@@ -188,29 +189,25 @@ class Tetris:
 
         return peaks
 
+    def get_holes(self):
+        board = self.board
+        holes = 0
+        for column in zip(*board):
+            i = 0
+            while i < self.rows and column[i] == 0:
+                i += 1
+            holes += len([x for x in column[i+1:] if x == 0])
+        return holes
+
+    def get_properties(self, r):
+        return [len(r), self.get_holes(), self.get_bumpiness(), self.get_total_peaks()]
+
     def get_possible_cleared_rows(self):
         res = []
         for row in range(self.rows):
             if self.is_row(row):
                 res.append(row)
         return res
-
-    def get_bumpiness(self):
-        return sum([abs(col2 - col1) for col1, col2 in zip(self.get_peaks()[:-1], self.get_peaks()[1:])])
-
-    def get_total_peaks(self):
-        return sum(self.get_peaks())
-
-    def get_holes(self):
-        board = self.board
-        totalHoles = 0
-        for column in zip(*board):
-            i = 0
-            while i < self.rows and column[i] == 0:
-                i += 1
-            totalHoles += len([x for x in column[i+1:] if x == 0])
-
-        return totalHoles
 
     def __str__(self):
         vert_borders = "+" + "-" * self.columns + "+\n"
